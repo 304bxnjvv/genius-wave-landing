@@ -71,10 +71,15 @@ app.get('/go', (req, res) => {
   }
 
   // Campaign-aware redirect
-  const isSynaptigen = (campaign || '').includes('synaptigen')
-  const hoplink = isSynaptigen
-    ? `https://bdf6aoe2onyb5kbdzdmh6dvbzm.hop.clickbank.net/?&traffic_source=facebook&traffic_type=paid&campaign=${campaign || 'synaptigen_focus'}&creative=${ad || 'synaptigen_ad'}&ad=${adset || 'synaptigen_adset'}&extclid=${fbclid || tid || ''}`
-    : `https://9ac670avmush5vb6fjleuw-u8a.hop.clickbank.net/?&traffic_source=facebook&traffic_type=paid&campaign=${campaign || 'gw_focus'}&creative=${ad || 'gw_focus1'}&ad=${adset || 'gw_focus1'}&extclid=${fbclid || tid || ''}`
+  const c = (campaign || '').toLowerCase()
+  let hoplink
+  if (c.includes('synaptigen')) {
+    hoplink = `https://bdf6aoe2onyb5kbdzdmh6dvbzm.hop.clickbank.net/?&traffic_source=facebook&traffic_type=paid&campaign=${campaign || 'synaptigen_focus'}&creative=${ad || 'synaptigen_ad'}&ad=${adset || 'synaptigen_adset'}&extclid=${fbclid || tid || ''}`
+  } else if (c.includes('axavive')) {
+    hoplink = `https://81d091e0fw-c2w1bkpnwjk6w9l.hop.clickbank.net/?&traffic_source=facebook&traffic_type=paid&campaign=${campaign || 'axavive'}&creative=${ad || 'axavive_ad'}&ad=${adset || 'axavive_adset'}&extclid=${fbclid || tid || ''}`
+  } else {
+    hoplink = `https://9ac670avmush5vb6fjleuw-u8a.hop.clickbank.net/?&traffic_source=facebook&traffic_type=paid&campaign=${campaign || 'gw_focus'}&creative=${ad || 'gw_focus1'}&ad=${adset || 'gw_focus1'}&extclid=${fbclid || tid || ''}`
+  }
   
   res.redirect(301, hoplink)
 })
@@ -132,6 +137,11 @@ app.get('/api/stats', (_req, res) => {
 // --- Synaptigen Landing Page ---
 app.get('/synaptigen', (_req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'synaptigen.html'))
+})
+
+// --- Axavive Landing Page ---
+app.get('/axavive', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'axavive.html'))
 })
 
 // --- Genius Wave Landing Page (home) ---
