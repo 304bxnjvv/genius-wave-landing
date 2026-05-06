@@ -70,8 +70,12 @@ app.get('/go', (req, res) => {
     console.error('[click] db error:', err.message)
   }
 
-  // Redirect to ClickBank hoplink
-  const hoplink = `https://9ac670avmush5vb6fjleuw-u8a.hop.clickbank.net/?&traffic_source=facebook&traffic_type=paid&campaign=${campaign || 'gw_focus'}&creative=${ad || 'gw_focus1'}&ad=${adset || 'gw_focus1'}&extclid=${fbclid || tid || ''}`
+  // Campaign-aware redirect
+  const isSynaptigen = (campaign || '').includes('synaptigen')
+  const hoplink = isSynaptigen
+    ? `https://bdf6aoe2onyb5kbdzdmh6dvbzm.hop.clickbank.net/?&traffic_source=facebook&traffic_type=paid&campaign=${campaign || 'synaptigen_focus'}&creative=${ad || 'synaptigen_ad'}&ad=${adset || 'synaptigen_adset'}&extclid=${fbclid || tid || ''}`
+    : `https://9ac670avmush5vb6fjleuw-u8a.hop.clickbank.net/?&traffic_source=facebook&traffic_type=paid&campaign=${campaign || 'gw_focus'}&creative=${ad || 'gw_focus1'}&ad=${adset || 'gw_focus1'}&extclid=${fbclid || tid || ''}`
+  
   res.redirect(301, hoplink)
 })
 
@@ -125,7 +129,17 @@ app.get('/api/stats', (_req, res) => {
   })
 })
 
-// --- Static Landing Page ---
+// --- Synaptigen Landing Page ---
+app.get('/synaptigen', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'synaptigen.html'))
+})
+
+// --- Genius Wave Landing Page (home) ---
+app.get('/', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'))
+})
+
+// --- Static Assets ---
 app.use(express.static(path.join(__dirname, 'public'), {
   maxAge: '1h',
   setHeaders: (res, filePath) => {
